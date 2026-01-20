@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Better Image Viewer</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: #111!important;
+      background-color: #111!important;
+      color: white;
+    }
+    body {
+      display: grid;
+      grid-template-rows: 40px 1fr 40px;
+      grid-template-areas:
+        "top"
+        "main"
+        "bottom";
+      overflow: hidden;
+      user-select: none;
+      outline: none;
+    }
+  </style>
+  <script src="./omggif.js" defer></script>
+  <script type="module" src="./viewer.js" defer></script>
+</head>
+<body tabindex="-1">
+
+  <div id="fileList">
+
+  </div>
+
+  <div id="topBar" class="">
+    <div id="topBarDiv">
+      
+      <div class="startTopBar">
+        <div id="" class="menu hidden" title="">
+        </div>
+      </div>
+
+      <div id="insideTopBar" class="middleTopBar">
+        <div id="fileMenuBtn" class="menu has-menu">
+          <svg class="barIconSvg" viewBox="0 -960 960 960">
+            <path d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h287q16 0 30.5 6t25.5 17l194 194q11 11 17 25.5t6 30.5v447q0 33-23.5 56.5T720-80H240Zm280-560v-160H240v640h480v-440H560q-17 0-28.5-11.5T520-640ZM240-800v200-200 640-640Z"/>
+          </svg>
+          <span>File</span>
+          <div id="fileMenuContextMenu" class="context-menu2">
+              <div class="ctx-item" data-action="openFile">Open File</div>
+              <div class="ctx-item" data-action="openFolder">Open Folder</div>
+              <div class="ctx-separator"></div>
+              <div class="ctx-item" data-action="setWallpaper">
+                Set as Desktop Background
+              </div>
+              <div class="ctx-separator"></div>
+              <div class="ctx-item" data-action="openExplorer">Open in Explorer</div>
+              <div class="ctx-item" data-action="renameFile">Rename File</div>
+              <div class="ctx-separator"></div>
+              <div class="ctx-item" data-action="properties">File Properties</div>
+              <div class="ctx-item" data-action="imageInfo">Image Info</div>
+          </div>
+        </div>
+
+        <div id="printBtn" class="menu">
+          <svg class="barIconSvg" viewBox="0 -960 960 960">
+            <path d="M320-120q-33 0-56.5-23.5T240-200v-80h-80q-33 0-56.5-23.5T80-360v-160q0-51 35-85.5t85-34.5h560q51 0 85.5 34.5T880-520v160q0 33-23.5 56.5T800-280h-80v80q0 33-23.5 56.5T640-120H320ZM160-360h80q0-33 23.5-56.5T320-440h320q33 0 56.5 23.5T720-360h80v-160q0-17-11.5-28.5T760-560H200q-17 0-28.5 11.5T160-520v160Zm480-280v-120H320v120h-80v-120q0-33 23.5-56.5T320-840h320q33 0 56.5 23.5T720-760v120h-80Zm80 180q17 0 28.5-11.5T760-500q0-17-11.5-28.5T720-540q-17 0-28.5 11.5T680-500q0 17 11.5 28.5T720-460Zm-80 260v-160H320v160h320ZM160-560h640-640Z"/>
+          </svg>
+          <span>Print</span>
+        </div>
+
+        <div id="openWithBtn" class="menu has-menu">
+          <svg class="barIconSvg" viewBox="0 0 512 512">
+            <g fill-rule="evenodd" transform="translate(42.667 42.667)">
+            <path d="M178.0832,42.6666667 L221.594,77.0716667 L191.217,107.448667 L163.24992,85.3333333 L42.6666667,85.3333333 L42.6666667,296.106667 L82.0209067,170.666667 L341.333333,170.666667 L341.333,170.665667 L384,170.665667 L437.333333,170.666667 L372.583253,384 L-2.13162821e-14,384 L-2.13162821e-14,42.6666667 L178.0832,42.6666667 Z M379.79136,213.333333 L113.354027,213.333333 L73.1874133,341.333333 L340.95808,341.333333 L379.79136,213.333333 Z"/>
+            <path fill-rule="nonzero" d="M384,7.10542736e-15 L384,149.333333 L341.333333,149.333333 L341.332777,72.836 L264.836777,149.332777 L204.496777,149.333333 L311.162777,42.666 L234.666667,42.6666667 L234.666667,7.10542736e-15 L384,7.10542736e-15 Z"/>
+            </g>
+          </svg>
+          <span>Open With</span>
+          <div id="openWithContextMenu" class="context-menu">
+            <!-- apps injected here -->
+            <div class="ctx-separator" id="openWithSeparator"></div>
+            <div class="ctx-item" data-action="openWithDialog">
+              Choose another app…
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+
+      <div class="endTopBar">
+        <div id="aboutBtn" class="menu" title="About">
+          <svg class="barIconSvg abtBtn" viewBox="0 -960 960 960" fill="white">
+            <path d="M480-280q17 0 28.5-11.5T520-320v-160q0-17-11.5-28.5T480-520q-17 0-28.5 11.5T440-480v160q0 17 11.5 28.5T480-280Zm0-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>
+          </svg>
+        </div>
+      </div>
+
+
+
+    </div>
+  </div>
+
+  <div id="middleFrame">
+    <div id="imgViewerDiv" class="">
+      <div id="loadingText">Loading…</div>
+      <img id="imgViewer" class="hidden" alt="" crossorigin="anonymous" />
+      <canvas id="gifCanvas" class="hidden"></canvas>
+    </div>
+    <div id="gridView" class="hidden">
+      <div id="gridContainer"></div>
+    </div>
+  </div>
+
+  <!-- <div id="gridView" class="hidden">
+    <div id="gridContainer"></div>
+  </div> -->
+
+  <div id="icoBar" class="ico-bar hidden">
+    <div id="insideIcoBar">
+      <div id="icoPrev" class="menu" title="Previous">
+        ◀
+      </div>
+      <span id="icoInfo"></span>
+      <div id="icoNext" class="menu" title="Next">
+        ▶
+      </div>
+    </div>
+  </div>
+
+    
+  <div id="gifBar" class="hidden">
+    <div id="insideGifBar">
+      <div id="gifPrev" class="menu" title="Previous GIF Frame">
+        ⏮
+      </div>
+      <div id="gifPlayPause" class="menu" title="Pause GIF">
+        ⏸
+      </div>
+      <div id="gifNext" class="menu" title="Next GIF Frame">
+        ⏭
+      </div>
+      <input type="range" id="slider" min="0" value="0">
+      <span id="info">Frame: 0/0</span>
+    </div>
+  </div> 
+ 
+
+
+
+  <div id="downBar" class="">
+    <div id="insideDownBar">
+
+      <div class="startItems">
+        <div class="infoItems">
+          <div class="infoDiv">
+            <div id="imgAmount"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="middleItems bar-group">
+
+        <div id="gridViewBtn" class="menu" title="Grid View">
+          <svg class="barIconSvg" viewBox="0 -960 960 960">
+            <path d="M200-520q-33 0-56.5-23.5T120-600v-160q0-33 23.5-56.5T200-840h160q33 0 56.5 23.5T440-760v160q0 33-23.5 56.5T360-520H200Zm0 400q-33 0-56.5-23.5T120-200v-160q0-33 23.5-56.5T200-440h160q33 0 56.5 23.5T440-360v160q0 33-23.5 56.5T360-120H200Zm400-400q-33 0-56.5-23.5T520-600v-160q0-33 23.5-56.5T600-840h160q33 0 56.5 23.5T840-760v160q0 33-23.5 56.5T760-520H600Zm0 400q-33 0-56.5-23.5T520-200v-160q0-33 23.5-56.5T600-440h160q33 0 56.5 23.5T840-360v160q0 33-23.5 56.5T760-120H600Z"/>
+          </svg>
+        </div>
+
+        <div id="zoomInBtn" class="menu" title="Zoom In">
+          <svg class="barIconSvg" viewBox="0 -960 960 960">
+            <path d="M340-540h-40q-17 0-28.5-11.5T260-580q0-17 11.5-28.5T300-620h40v-40q0-17 11.5-28.5T380-700q17 0 28.5 11.5T420-660v40h40q17 0 28.5 11.5T500-580q0 17-11.5 28.5T460-540h-40v40q0 17-11.5 28.5T380-460q-17 0-28.5-11.5T340-500v-40Zm40 220q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l224 224q11 11 11 28t-11 28q-11 11-28 11t-28-11L532-372q-30 24-69 38t-83 14Zm0-80q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/>
+          </svg>
+        </div>
+
+        <div id="zoomOutBtn" class="menu" title="Zoom Out">
+          <svg class="barIconSvg" viewBox="0 -960 960 960">
+            <path d="M320-540q-17 0-28.5-11.5T280-580q0-17 11.5-28.5T320-620h120q17 0 28.5 11.5T480-580q0 17-11.5 28.5T440-540H320Zm60 220q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l224 224q11 11 11 28t-11 28q-11 11-28 11t-28-11L532-372q-30 24-69 38t-83 14Zm0-80q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/>
+          </svg>
+        </div>
+
+        <div id="originalSize" class="menu" title="Original Size">
+          <svg class="barIconSvg" viewBox="0 -960 960 960">
+            <path d="M800-640v-80h-80q-17 0-28.5-11.5T680-760q0-17 11.5-28.5T720-800h80q33 0 56.5 23.5T880-720v80q0 17-11.5 28.5T840-600q-17 0-28.5-11.5T800-640Zm-720 0v-80q0-33 23.5-56.5T160-800h80q17 0 28.5 11.5T280-760q0 17-11.5 28.5T240-720h-80v80q0 17-11.5 28.5T120-600q-17 0-28.5-11.5T80-640Zm720 480h-80q-17 0-28.5-11.5T680-200q0-17 11.5-28.5T720-240h80v-80q0-17 11.5-28.5T840-360q17 0 28.5 11.5T880-320v80q0 33-23.5 56.5T800-160Zm-640 0q-33 0-56.5-23.5T80-240v-80q0-17 11.5-28.5T120-360q17 0 28.5 11.5T160-320v80h80q17 0 28.5 11.5T280-200q0 17-11.5 28.5T240-160h-80Zm80-240v-160q0-33 23.5-56.5T320-640h320q33 0 56.5 23.5T720-560v160q0 33-23.5 56.5T640-320H320q-33 0-56.5-23.5T240-400Zm80 0h320v-160H320v160Zm0 0v-160 160Z"/>
+          </svg>  
+        </div>
+
+        <div id="prev" class="menu" title="Previous">
+          <svg class="barIconSvg" viewBox="0 -960 960 960">
+            <path d="m314-440 114 114q12 12 11.5 28T428-270q-12 12-28.5 12.5T371-269L188-452q-12-12-12-28t12-28l183-183q12-12 28.5-11.5T428-690q11 12 11.5 28T428-634L314-520h446q17 0 28.5 11.5T800-480q0 17-11.5 28.5T760-440H314Z"/>
+          </svg>
+        </div>
+
+        <div id="slideShow" class="menu" title="Slideshow">
+          <svg class="barIconSvg" viewBox="0 -960 960 960">
+            <path d="M634-463q9-6 9-17t-9-17L411-640q-10-7-20.5-1T380-623v286q0 12 10.5 18t20.5-1l223-143ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/>
+          </svg>
+        </div>
+
+        <div id="next" class="menu" title="Next">
+          <svg class="barIconSvg" viewBox="0 -960 960 960">
+            <path d="M646-440H200q-17 0-28.5-11.5T160-480q0-17 11.5-28.5T200-520h446L532-634q-12-12-11.5-28t11.5-28q12-12 28.5-12.5T589-691l183 183q6 6 8.5 13t2.5 15q0 8-2.5 15t-8.5 13L589-269q-12 12-28.5 11.5T532-270q-11-12-11.5-28t11.5-28l114-114Z"/>
+          </svg>
+        </div>
+
+        <div id="rotateLeft" class="menu hidden" title="Rotate Left">
+          <svg class="barIconSvg" viewBox="0 -960 960 960">
+            <path d="M480-80q-75 0-140.5-28.5t-114-77q-48.5-48.5-77-114T120-440q0-17 11.5-28.5T160-480q17 0 28.5 11.5T200-440q0 117 81.5 198.5T480-160q117 0 198.5-81.5T760-440q0-117-81.5-198.5T480-720h-6l34 34q12 12 11.5 28T508-630q-12 12-28.5 12.5T451-629L348-732q-12-12-12-28t12-28l103-103q12-12 28.5-11.5T508-890q11 12 11.5 28T508-834l-34 34h6q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-440q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-80Z"/>
+          </svg>
+        </div>
+
+        <div id="rotateRight" class="menu hidden" title="Rotate Right">
+          <svg class="barIconSvg" viewBox="0 -960 960 960">
+            <path d="M480-80q-75 0-140.5-28.5t-114-77q-48.5-48.5-77-114T120-440q0-75 28.5-140.5t77-114q48.5-48.5 114-77T480-800h6l-34-34q-11-11-11-27.5t11-28.5q12-12 28.5-12.5T509-891l103 103q11 11 11 28t-11 28L509-629q-12 12-28.5 11.5T452-630q-11-12-11-28.5t11-27.5l34-34h-6q-117 0-198.5 81.5T200-440q0 117 81.5 198.5T480-160q106 0 185-69t93-174q2-16 14-26.5t28-10.5q16 0 28 10t10 25q-14 139-116 232T480-80Z"/></svg>
+          </div>
+
+        <div id="deleteBtn" class="menu" title="Delete">
+          <svg class="barIconSvg" viewBox="0 -960 960 960">
+            <path d="M280-120q-33 0-56.5-23.5T200-200v-520q-17 0-28.5-11.5T160-760q0-17 11.5-28.5T200-800h160q0-17 11.5-28.5T400-840h160q17 0 28.5 11.5T600-800h160q17 0 28.5 11.5T800-760q0 17-11.5 28.5T760-720v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM400-280q17 0 28.5-11.5T440-320v-280q0-17-11.5-28.5T400-640q-17 0-28.5 11.5T360-600v280q0 17 11.5 28.5T400-280Zm160 0q17 0 28.5-11.5T600-320v-280q0-17-11.5-28.5T560-640q-17 0-28.5 11.5T520-600v280q0 17 11.5 28.5T560-280ZM280-720v520-520Z"/>
+          </svg>
+        </div>
+
+      </div><!-- bar-group -->
+
+      <div class=" endItems infoItems">
+
+        <div class="infoDiv">
+          <span id="zoomLabel" class="barText">Zoom:</span>
+          <div id="zoomValue"></div>
+        </div>
+
+        <div class="infoDiv">
+          <span id="imgLabel" class="barText">Size:</span>
+          <div id="imgSize"></div>
+        </div>
+
+      </div>
+
+    </div><!-- insideDownBar -->
+
+  </div><!-- downbar -->
+
+  <!-- <div id="toolList">
+
+  </div> -->
+
+    <!---------------------------- CONFIRM DIALOG ---------------------------------->
+  <div id="confirmDlg" class="">
+      <div id="" class="confirmWindowTop">
+          <span id="confirmDlg_Title" class="">Confirmation</span>
+          <div id="confirmDlgCloseBtn" class="confirmCloseBtn">
+              <svg class="xBtn" viewBox="0 -960 960 960">
+                  <path d="M480-424 284-228q-11 11-28 11t-28-11q-11-11-11-28t11-28l196-196-196-196q-11-11-11-28t11-28q11-11 28-11t28 11l196 196 196-196q11-11 28-11t28 11q11 11 11 28t-11 28L536-480l196 196q11 11 11 28t-11 28q-11 11-28 11t-28-11L480-424Z"/>
+              </svg>
+          </div>
+      </div>
+      <div class="confirmDlg_Content">
+          <span id="confirmText" class=""></span>
+      </div>  
+      <div id="" class="confirmDlg_Buttons">
+          <button id="confirmOk" class="buttonStyle inputBtns" type="button">Yes</button>
+          <button id="confirmCancel" class="buttonStyle inputBtns" type="button">Cancel</button>
+      </div>
+  </div>
+  <!---------------------- /CONFIRM DIALOG ----------------------->
+
+  <!---------------------------- INPUT DIALOG / INPUT WINDOW ---------------------------------->
+  <div id="inputDlg" class="">
+      <div id="" class="windowTop">
+          <span id="inputDlg_Title" class="">Rename File</span>
+          <div id="inputDlgCloseBtn" class="closeBtn">
+              <svg class="xBtn" viewBox="0 -960 960 960">
+                  <path d="M480-424 284-228q-11 11-28 11t-28-11q-11-11-11-28t11-28l196-196-196-196q-11-11-11-28t11-28q11-11 28-11t28 11l196 196 196-196q11-11 28-11t28 11q11 11 11 28t-11 28L536-480l196 196q11 11 11 28t-11 28q-11 11-28 11t-28-11L480-424Z"/>
+              </svg>
+          </div>
+      </div>
+      
+      <div class="inputDlg_Content">
+        <div class="inputDlgContentDiv">
+            <input id="inputDlgInput" class="inputDlgInput" type="text" placeholder="New Name" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        </div>
+      </div>  
+
+      <div id="" class="inputDlgBtns">
+          <button id="inputOk" class="buttonStyle inputBtns" type="button">Ok</button>
+          <button id="inputCancel" class="buttonStyle inputBtns" type="button">Cancel</button>
+      </div>
+  </div>
+
+  <!---------------------- /INPUT DIALOG ----------------------->
+
+  <!------------------ IMAGE INFO Dialog ---------------->
+  <div id="imgInfoDlg" class="">
+      <div id="dragImgInfo" class="windowTop2">
+          <span>Image Info</span>
+          <div id="closeImgInfo" class="closeBtn2">
+              <svg class="xBtn" viewBox="0 -960 960 960">
+                  <path d="M480-424 284-228q-11 11-28 11t-28-11q-11-11-11-28t11-28l196-196-196-196q-11-11-11-28t11-28q11-11 28-11t28 11l196 196 196-196q11-11 28-11t28 11q11 11 11 28t-11 28L536-480l196 196q11 11 11 28t-11 28q-11 11-28 11t-28-11L480-424Z"/>
+              </svg>
+          </div>
+      </div>
+      
+      <div class="imgInfoContent">
+        <div class="infoRow">
+          <span class="infoLabel">File Name:</span>
+          <span id="imgInfoFileName"></span>
+        </div>
+
+        <div class="infoRow">
+          <span class="infoLabel">Format:</span>
+          <span id="imgInfoFormat"></span>
+        </div>
+
+        <div class="infoRow">
+          <span class="infoLabel">Dimensions:</span>
+          <span id="imgInfoDimensions"></span>
+        </div>
+
+        <div class="infoRow">
+          <span class="infoLabel">File Size:</span>
+          <span id="imgInfoFileSize"></span>
+        </div>
+
+        <div class="infoRow">
+          <span class="infoLabel">Color Mode:</span>
+          <span id="imgInfoColorMode"></span>
+        </div>
+
+        <div class="infoRow">
+          <span class="infoLabel">Bit Depth:</span>
+          <span id="imgInfoBitDepth"></span>
+        </div>
+
+        <div class="infoRow">
+          <span class="infoLabel">Alpha Channel:</span>
+          <span id="imgInfoAlpha"></span>
+        </div>
+
+        <div class="infoRow">
+          <span class="infoLabel">Aspect Ratio:</span>
+          <span id="imgInfoAspect"></span>
+        </div>
+
+        <div class="infoRow">
+          <span class="infoLabel">Orientation:</span>
+          <span id="imgInfoOrientation"></span>
+        </div>
+
+        <!-- <div class="infoRow">
+          <span class="infoLabel">DPI:</span>
+          <span id="imgInfoDPI"></span>
+        </div>
+
+        <div class="infoRow">
+          <span class="infoLabel">Zoom Level:</span>
+          <span id="imgInfoZoom"></span>
+        </div>
+
+        <div class="infoRow">
+          <span class="infoLabel">Displayed Resolution:</span>
+          <span id="imgInfoDisplayedRes"></span>
+        </div>
+
+        <div class="infoRow">
+          <span class="infoLabel">Scaling:</span>
+          <span id="imgInfoScaling"></span>
+        </div> -->
+
+        <hr>
+
+        <div class="infoRow">
+          <span class="infoLabel">Full Path:</span>
+          <span id="imgInfoFullPath"></span>
+        </div>
+
+        <div class="infoRow">
+          <span class="infoLabel">Created:</span>
+          <span id="imgInfoCreated"></span>
+        </div>
+
+        <div class="infoRow">
+          <span class="infoLabel">Modified:</span>
+          <span id="imgInfoModified"></span>
+        </div>
+
+        <!-- <div class="infoRow">
+          <span class="infoLabel">Read-only:</span>
+          <span id="imgInfoReadOnly"></span>
+        </div> -->
+
+        <hr>
+
+        <div id="imgExifBlock" style="display:none;">
+          <div class="infoRow">
+            <span class="infoLabel">Date Taken:</span>
+            <span id="imgInfoDateTaken"></span>
+          </div>
+
+          <div class="infoRow">
+            <span class="infoLabel">Camera:</span>
+            <span id="imgInfoCamera"></span>
+          </div>
+
+          <div class="infoRow">
+            <span class="infoLabel">Aperture:</span>
+            <span id="imgInfoAperture"></span>
+          </div>
+
+          <div class="infoRow">
+            <span class="infoLabel">Shutter:</span>
+            <span id="imgInfoShutter"></span>
+          </div>
+
+          <div class="infoRow">
+            <span class="infoLabel">ISO:</span>
+            <span id="imgInfoISO"></span>
+          </div>
+
+          <div class="infoRow">
+            <span class="infoLabel">Focal Length:</span>
+            <span id="imgInfoFocal"></span>
+          </div>
+
+          <div class="infoRow">
+            <span class="infoLabel">Flash:</span>
+            <span id="imgInfoFlash"></span>
+          </div>
+
+          <div class="infoRow">
+            <span class="infoLabel">Color Profile:</span>
+            <span id="imgInfoColorProfile"></span>
+          </div>
+        </div>
+
+      </div><!-- MIDDLE CONTENT -->
+      <div class="id3Btns">
+          <button id="imgInfoCloseBtn" class="buttonStyle" type="button">Close</button>
+      </div>
+  </div>
+  <!------------------ IMAGE INFO Dialog ---------------->
+
+  <!-------------------------ABOUT WINDOW-------------------------------->
+  <div id="aboutWindow" class="hidden">
+      <div id="dragHandleAbout" class="windowTop2">
+          <span class="windowTitle">About</span>
+          <div id="aboutCloseBtn" class="closeBtn">
+              <svg class="xBtn" viewBox="0 -960 960 960">
+                  <path d="M480-424 284-228q-11 11-28 11t-28-11q-11-11-11-28t11-28l196-196-196-196q-11-11-11-28t11-28q11-11 28-11t28 11l196 196 196-196q11-11 28-11t28 11q11 11 11 28t-11 28L536-480l196 196q11 11 11 28t-11 28q-11 11-28 11t-28-11L480-424Z"/>
+              </svg>
+          </div>
+      </div>
+
+      <div class="aboutContentDiv">
+          <img id="logo" src="./img/128x128.png" alt="">
+          <div>Better Image Viewer 1.0.0</div>
+          <div>2026</div>
+          <div>Created by: Hudson Pear (pyrus)</div>
+          <div class="">
+          <a id="theEmail" class="theEmail" href="mailto:coolnewtabpage@gmail.com">
+              coolnewtabpage@gmail.com
+          </a>
+          <span id="copyIcon">📋</span>
+          </div>
+
+          <div id="helpGithub" class="helpGithub">
+              <svg class="imgGithub" width="32" height="32" viewBox="0 0 1024 1024" fill="white" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8C0 11.54 2.29 14.53 5.47 15.59C5.87 15.66 6.02 15.42 6.02 15.21C6.02 15.02 6.01 14.39 6.01 13.72C4 14.09 3.48 13.23 3.32 12.78C3.23 12.55 2.84 11.84 2.5 11.65C2.22 11.5 1.82 11.13 2.49 11.12C3.12 11.11 3.57 11.7 3.72 11.94C4.44 13.15 5.59 12.81 6.05 12.6C6.12 12.08 6.33 11.73 6.56 11.53C4.78 11.33 2.92 10.64 2.92 7.58C2.92 6.71 3.23 5.99 3.74 5.43C3.66 5.23 3.38 4.41 3.82 3.31C3.82 3.31 4.49 3.1 6.02 4.13C6.66 3.95 7.34 3.86 8.02 3.86C8.7 3.86 9.38 3.95 10.02 4.13C11.55 3.09 12.22 3.31 12.22 3.31C12.66 4.41 12.38 5.23 12.3 5.43C12.81 5.99 13.12 6.7 13.12 7.58C13.12 10.65 11.25 11.33 9.47 11.53C9.76 11.78 10.01 12.26 10.01 13.01C10.01 14.08 10 14.94 10 15.21C10 15.42 10.15 15.67 10.55 15.59C13.71 14.53 16 11.53 16 8C16 3.58 12.42 0 8 0Z" transform="scale(64)" fill=""/>
+              </svg>
+              <span class="textRate">Github</span>
+          </div>
+      </div><!-- ABOUT CONTENT -->
+
+  </div>
+  <!-------------------------/ABOUT WINDOW-------------------------------->
+
+
+
+  <div id="openWithWrapper">
+    <div id="openWithMenu" class="menu open-with-menu"></div>
+  </div>
+
+  <div id="keyFocus" tabindex="0" style="position: fixed; opacity: 0;"></div>
+
+</body>
+</html>
