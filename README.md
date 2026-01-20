@@ -48,6 +48,8 @@ Available for Windows
 
 ## How to Build
 
+<b>Requirements:</b> Node.js (LTS), Rust, Tauri prerequisites for your OS
+
 Install dependencies with:
 
 ```
@@ -65,3 +67,4 @@ to compile:
 ```
 npx tauri build
 ```
+
