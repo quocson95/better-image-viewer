@@ -58,4 +58,10 @@ then run with:
 
 ```
 npm run tauri dev
+```
 
+to compile:
+
+```
+npx tauri build
+```
